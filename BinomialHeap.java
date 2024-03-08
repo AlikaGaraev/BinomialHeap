@@ -1,4 +1,10 @@
 /**
+ * username1 - ishayyem
+ * id1       - 322868852
+ * name1     - Ishay Yemini
+ * username2 - alikagaraev
+ * id2       - 323222141
+ * name2     - Alika Garaev
  * BinomialHeap
  *
  * An implementation of binomial heap over non-negative integers.
