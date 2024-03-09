@@ -76,53 +76,59 @@ public class BinomialHeap {
 		this.size += heap2.size();
 
 		// Merge the two heaps
-		HeapNode node1 = this.last.next;
-		HeapNode node2 = heap2.last.next;
-		if (this.last.next.rank > heap2.last.next.rank) {
-			node1 = heap2.last.next;
-			node2 = this.last.next;
-		}
-		while (node1 != this.last && node1 != heap2.last) {
-			if (node1.next.rank > node2.rank) {
-				HeapNode oldNext = node1.next;
-				node1.setNext(node2);
-				node2 = oldNext;
+		if (heap2.size() == 1) {
+			heap2.last.setNext(this.last.next);
+			this.last.setNext(heap2.last);
+		} else {
+			HeapNode node1 = this.last.next;
+			HeapNode node2 = heap2.last.next;
+			if (this.last.next.rank > heap2.last.next.rank) {
+				node1 = heap2.last.next;
+				node2 = this.last.next;
 			}
-			node1 = node1.next;
+			while (node1 != this.last && node1 != heap2.last) {
+				if (node1.next.rank > node2.rank) {
+					HeapNode oldNext = node1.next;
+					node1.setNext(node2);
+					node2 = oldNext;
+				}
+				node1 = node1.next;
+			}
+			node2.setNext(node1.next);
+			node1.setNext(node2);
+			this.last = node2;
 		}
-		node2.setNext(node1.next);
-		node1.setNext(node2);
-		this.last = node2;
 
 		// Consolidate the trees if needed and find the new min
 		HeapNode node = this.last.next;
 		HeapNode oldNode = this.last;
 		HeapNode min = node;
-		this.treeNum = 0;
+		this.treeNum = 1;
 		while (node != this.last) {
-			if (node.rank == node.next.rank && node.rank != node.next.next.rank) {
+			if (node.rank == node.next.rank && (node == node.next.next || node.rank != node.next.next.rank)) {
 				node = mergeTrees(node, node.next);
-				oldNode.next = node;
+				oldNode.setNext(node);
+				continue;
 			}
-			if (node.item.key < min.item.key) min = node;
-			this.treeNum++;
-
+			// Only go forward if we didn't merge!
 			oldNode = node;
 			node = node.next;
+			this.treeNum++;
+			if (node.item.key < min.item.key) min = node;
 		}
 		this.min = min;
 	}
 
 	HeapNode mergeTrees(HeapNode n1, HeapNode n2) {
-		if (n1.rank != n2.rank) return n1;
-		if (n1.item.key > n2.item.key) {
+		if (n1.rank != n2.rank) return n2;
+		if (n1.item.key < n2.item.key && n1.rank < 5) {
 			n1.next = n2.next;
 			return mergeTrees(n2, n1);
 		}
 		if (n2.child != null) {
-			n1.next = n2.child.next;
-			n2.child.next = n1;
-		}
+			n1.setNext(n2.child.next);
+			n2.child.setNext(n1);
+		} else n1.setNext(n1);
 		n2.child = n1;
 		n1.parent = n2;
 		n2.rank++;
