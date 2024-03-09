@@ -189,4 +189,32 @@ public class BinomialHeap {
 			this.info = info;
 		}
 	}
+
+	public void printHeap() {
+		if (empty()) {
+			System.out.println("Heap is empty");
+			return;
+		}
+		System.out.println("Binomial Heap:");
+		HeapNode currentRoot = last;
+		HeapNode stopNode = last.next;
+		boolean stop = false;
+
+		do {
+			System.out.println("Root: " + currentRoot.item.key);
+			currentRoot = currentRoot.next;
+			printTree(currentRoot, 0, currentRoot);
+			if (currentRoot == stopNode) stop = true;
+		} while (!stop);
+	}
+
+	private void printTree(HeapNode node, int depth, HeapNode initialRoot) {
+		System.out.println("  ".repeat(Math.max(0, depth)) + node.item.key + " [" + node.rank + "]");
+		if (node.child != null) {
+			printTree(node.child.next, depth + 1, node.child.next);
+		}
+		if (node.next != initialRoot) {
+			printTree(node.next, depth, initialRoot);
+		}
+	}
 }
