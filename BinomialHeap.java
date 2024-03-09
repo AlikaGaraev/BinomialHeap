@@ -16,14 +16,6 @@ public class BinomialHeap {
 	public HeapNode last;
 	public HeapNode min;
 
-	public BinomialHeap() {}
-
-	public BinomialHeap(int size, HeapNode last, HeapNode min) {
-		this.size = size;
-		this.last = last;
-		this.min = min;
-	}
-
 	/**
 	 * pre: key > 0
 	 * Insert (key,info) into the heap and return the newly generated HeapItem.
@@ -31,7 +23,17 @@ public class BinomialHeap {
 	public HeapItem insert(int key, String info) {
 		HeapNode newNode = new HeapNode(key, info);
 
-		this.meld(newNode.toHeap());
+		if (this.last == null) {
+			this.last = newNode;
+			this.min = newNode;
+			this.size = 1;
+			this.treeNum = 1;
+			newNode.next = newNode;
+		} else {
+			BinomialHeap heap = new BinomialHeap();
+			heap.insert(key, info);
+			this.meld(heap);
+		}
 
 		return newNode.item;
 	}
@@ -165,13 +167,6 @@ public class BinomialHeap {
 
 		public void setNext(HeapNode next) {
 			this.next = next;
-		}
-
-		/**
-		 * Return the node as a heap
-		 */
-		public BinomialHeap toHeap() {
-			return new BinomialHeap(1, this, this);
 		}
 	}
 
