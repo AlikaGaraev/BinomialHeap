@@ -21,21 +21,20 @@ public class BinomialHeap {
 	 * Insert (key,info) into the heap and return the newly generated HeapItem.
 	 */
 	public HeapItem insert(int key, String info) {
-		HeapNode newNode = new HeapNode(key, info);
-
 		if (this.last == null) {
+			HeapNode newNode = new HeapNode(key, info);
 			this.last = newNode;
 			this.min = newNode;
 			this.size = 1;
 			this.treeNum = 1;
 			newNode.next = newNode;
+			return newNode.item;
 		} else {
 			BinomialHeap heap = new BinomialHeap();
-			heap.insert(key, info);
+			HeapItem item = heap.insert(key, info);
 			this.meld(heap);
+			return item;
 		}
-
-		return newNode.item;
 	}
 
 	/**
@@ -59,7 +58,15 @@ public class BinomialHeap {
 	 * Decrease the key of item by diff and fix the heap.
 	 */
 	public void decreaseKey(HeapItem item, int diff) {
-		// should be replaced by student code
+		item.key -= diff;
+		HeapNode node = item.node;
+		while (node.parent != null && node.item.key < node.parent.item.key) {
+			node.item = node.parent.item;
+			node.parent.item.node = node.parent;
+			node.parent.item = item;
+			item.node = node.parent;
+			node = node.parent;
+		}
 	}
 
 	/**
