@@ -12,6 +12,7 @@
  */
 public class BinomialHeap {
 	public int size;
+	public int treeNum;
 	public HeapNode last;
 	public HeapNode min;
 
@@ -70,14 +71,67 @@ public class BinomialHeap {
 	 * Meld the heap with heap2
 	 */
 	public void meld(BinomialHeap heap2) {
-		// should be replaced by student code
+		this.size += heap2.size();
+
+		// Merge the two heaps
+		HeapNode node1 = this.last.next;
+		HeapNode node2 = heap2.last.next;
+		if (this.last.next.rank > heap2.last.next.rank) {
+			node1 = heap2.last.next;
+			node2 = this.last.next;
+		}
+		while (node1 != this.last && node1 != heap2.last) {
+			if (node1.next.rank > node2.rank) {
+				HeapNode oldNext = node1.next;
+				node1.setNext(node2);
+				node2 = oldNext;
+			}
+			node1 = node1.next;
+		}
+		node2.setNext(node1.next);
+		node1.setNext(node2);
+		this.last = node2;
+
+		// Consolidate the trees if needed and find the new min
+		HeapNode node = this.last.next;
+		HeapNode oldNode = this.last;
+		HeapNode min = node;
+		this.treeNum = 0;
+		while (node != this.last) {
+			if (node.rank == node.next.rank && node.rank != node.next.next.rank) {
+				node = mergeTrees(node, node.next);
+				oldNode.next = node;
+			}
+			if (node.item.key < min.item.key) min = node;
+			this.treeNum++;
+
+			oldNode = node;
+			node = node.next;
+		}
+		this.min = min;
+	}
+
+	HeapNode mergeTrees(HeapNode n1, HeapNode n2) {
+		if (n1.rank != n2.rank) return n1;
+		if (n1.item.key > n2.item.key) {
+			n1.next = n2.next;
+			return mergeTrees(n2, n1);
+		}
+		if (n2.child != null) {
+			n1.next = n2.child.next;
+			n2.child.next = n1;
+		}
+		n2.child = n1;
+		n1.parent = n2;
+		n2.rank++;
+		return n2;
 	}
 
 	/**
 	 * Return the number of elements in the heap
 	 */
 	public int size() {
-		return size; // should be replaced by student code
+		return this.size;
 	}
 
 	/**
@@ -85,14 +139,14 @@ public class BinomialHeap {
 	 * is empty.
 	 */
 	public boolean empty() {
-		return size == 0;
+		return this.size == 0;
 	}
 
 	/**
 	 * Return the number of trees in the heap.
 	 */
 	public int numTrees() {
-		return 0; // should be replaced by student code
+		return this.treeNum;
 	}
 
 	/**
@@ -107,6 +161,10 @@ public class BinomialHeap {
 
 		public HeapNode(int key, String info) {
 			this.item = new HeapItem(this, key, info);
+		}
+
+		public void setNext(HeapNode next) {
+			this.next = next;
 		}
 
 		/**
