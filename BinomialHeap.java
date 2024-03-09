@@ -35,6 +35,10 @@ public class BinomialHeap
 	 */
 	public void deleteMin()
 	{
+		if size == 0 {
+			return null;
+	    }
+
 		return; // should be replaced by student code
 
 	}
@@ -46,7 +50,7 @@ public class BinomialHeap
 	 */
 	public HeapItem findMin()
 	{
-		return null; // should be replaced by student code
+		return min.item;
 	} 
 
 	/**
@@ -88,7 +92,7 @@ public class BinomialHeap
 	 */
 	public int size()
 	{
-		return 42; // should be replaced by student code
+		return size; // should be replaced by student code
 	}
 
 	/**
@@ -99,6 +103,9 @@ public class BinomialHeap
 	 */
 	public boolean empty()
 	{
+		if size == 0 {
+			return true;
+	}
 		return false; // should be replaced by student code
 	}
 
