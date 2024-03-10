@@ -77,7 +77,6 @@ public class BinomialHeap {
 			this.size -= (newHeap.size + 1);
 			this.meld(newHeap);
 		}
-		// last is the same
 	}
 
 	/**
@@ -166,7 +165,7 @@ public class BinomialHeap {
 
 	HeapNode mergeTrees(HeapNode n1, HeapNode n2) {
 		//if (n1.rank != n2.rank) return n2;
-		if (n1.item.key < n2.item.key && n1.rank < 5) {
+		if (n1.item.key < n2.item.key) {
 			n1.next = n2.next;
 			return mergeTrees(n2, n1);
 		}
