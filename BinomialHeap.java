@@ -10,6 +10,7 @@
  * An implementation of binomial heap over non-negative integers.
  * Based on exercise from previous semester.
  */
+import java.lang.Math
 public class BinomialHeap {
 	public int size;
 	public int treeNum;
@@ -41,8 +42,41 @@ public class BinomialHeap {
 	 * Delete the minimal item
 	 */
 	public void deleteMin() {
-		if (size == 0) return;
-		// find new min
+		if (this.size == 0) return;
+		else {
+			HeapNode oldMin = this.min;
+			HeapNode prevMin = new HeapNode();
+			HeapNode newMin = this.last;
+			HeapNode node = this.last;
+			while (node.next != this.last) {      //finding the new min
+				node = node.next;
+				if (node.item.key < newMin.item.key && node != oldMin) {
+					newMin = node;
+				}
+				if (node.next == oldMin) {
+					prevMin = node;
+				}
+			}
+			this.min = newMin;    //setting the new min
+			node = oldMin.child;
+			BinomialHeap newHeap = new BinomialHeap();   //setting new binomial heap with the children of the old min
+			newHeap.min = node;
+			newHeap.last = node;
+			newHeap.size = Math.pow(2,node.rank);
+			newHeap.treeNum = 1;
+			while (node.next != oldMin.child) {
+				node = node.next;
+				if (node.item.key < newHeap.min){
+					newHeap.min = node;
+				}
+				newHeap.size += Math.pow(2,node.rank);
+				newHeap.treeNum += 1;
+			}
+			prevMin.next = prevMin.next.next;   //skipping oldMin
+			this.treeNum -= 1;
+			this.size -= (newHeap.size + 1);
+			this.meld(newHeap);
+		}
 		// last is the same
 	}
 
@@ -67,13 +101,17 @@ public class BinomialHeap {
 			item.node = node.parent;
 			node = node.parent;
 		}
+		if (min.item.key < item.key) {
+			this.min = item.node;
+		}
 	}
 
 	/**
 	 * Delete the item from the heap.
 	 */
 	public void delete(HeapItem item) {
-		// should be replaced by student code
+		this.decreaseKey(item, item.key);
+		this.deleteMin();
 	}
 
 	/**
@@ -127,7 +165,7 @@ public class BinomialHeap {
 	}
 
 	HeapNode mergeTrees(HeapNode n1, HeapNode n2) {
-		if (n1.rank != n2.rank) return n2;
+		//if (n1.rank != n2.rank) return n2;
 		if (n1.item.key < n2.item.key && n1.rank < 5) {
 			n1.next = n2.next;
 			return mergeTrees(n2, n1);
